@@ -26,6 +26,7 @@ export interface AuthState {
 export interface TasksState {
   tasks: Task[];
   task: Task|null;
+  todoLength:number
   isLoading: boolean;
   error: string | null;
 }

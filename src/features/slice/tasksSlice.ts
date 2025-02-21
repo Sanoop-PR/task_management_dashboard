@@ -1,18 +1,31 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { Task, TasksState } from '../../types';
+import { number } from 'yup';
 
 const initialState: TasksState = {
   tasks: [],
   task: null,
+  todoLength:0,
   isLoading: false,
   error: null,
 };
 
-export const fetchTasks = createAsyncThunk<Task[],void>('tasks/fetchTasks', async () => {
+export const fetchTasks = createAsyncThunk<Task[], { page: number, limit: number }>('tasks/fetchTasks', async ({ page, limit }) => {
+  const response = await axios.get('https://jsonplaceholder.typicode.com/todos',{
+    params: {
+      _page: page,
+      _limit: limit,
+    },
+  });
+  return response.data;
+});
+
+export const allTodos = createAsyncThunk<Task[]>('tasks/allTodos', async () => {
   const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
   return response.data;
 });
+
 export const getTaskById = createAsyncThunk('tasks/getTaskById', async (id:string) => {
   const response = await axios.get(`https://jsonplaceholder.typicode.com/todos/${id}`);
   return response.data;
@@ -50,6 +63,9 @@ const tasksSlice = createSlice({
       .addCase(fetchTasks.rejected, (state, action) => {
         state.isLoading = false;
         state.error = action.error.message as string;
+      })
+      .addCase(allTodos.fulfilled, (state, action) => {
+        state.todoLength = action.payload.length;
       })
       .addCase(getTaskById.pending, (state) => {
         state.isLoading = true;

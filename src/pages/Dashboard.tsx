@@ -2,18 +2,22 @@ import { useDispatch, useSelector } from "react-redux";
 import { AddTask } from "../components/AddTask";
 import { ListTask } from "../components/ListTask";
 import { AppDispatch, RootState } from "../features/store";
-import { fetchTasks } from "../features/slice/tasksSlice";
+import { allTodos, fetchTasks } from "../features/slice/tasksSlice";
 import { useEffect, useState } from "react";
+import { PaginationBtn } from "../components/PaginationBtn";
 
 export const Dashboard = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { tasks } = useSelector((state: RootState) => state.tasks);
+  const { tasks,todoLength } = useSelector((state: RootState) => state.tasks);
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("title");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [tasksPerPage, setTasksPerPage] = useState(10);
 
   useEffect(() => {
-    tasks.length===0 &&dispatch(fetchTasks());
-  }, [dispatch]);
+    dispatch(allTodos())
+    dispatch(fetchTasks({ page: currentPage, limit: tasksPerPage }));
+  }, [dispatch, currentPage]);
 
   // Filtering Logic
   let filteredData = tasks
@@ -63,6 +67,7 @@ export const Dashboard = () => {
       ) : (
         <p>No tasks found</p>
       )}
+      <PaginationBtn totalTasks={todoLength}  tasksPerPage={tasksPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage}/>
     </main>
   );
 };

@@ -5,10 +5,8 @@ import { encryptTransform } from "redux-persist-transform-encrypt";
 import authSlice from "./slice/authSlice";
 import tasksSlice from "./slice/tasksSlice";
 
-// Define RootState Type
 export type RootState = ReturnType<typeof rootReducer>;
 
-// Persist Config with TypeScript
 const persistConfig = {
   key: "root",
   version: 1,
@@ -26,7 +24,6 @@ const persistConfig = {
   ],
 };
 
-// Root reducer
 const rootReducer = combineReducers({
   auth: authSlice,
   tasks: tasksSlice,
@@ -39,7 +36,7 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: ['persist/PERSIST'],  // Ignore serializable checks for persist actions
+        ignoredActions: ['persist/PERSIST'],
       },
     }),
 });
