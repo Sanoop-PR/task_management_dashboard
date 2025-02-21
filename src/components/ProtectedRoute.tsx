@@ -6,7 +6,7 @@ export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const user = useSelector((state: RootState) => state.auth.user);
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/sign-in" replace />;
   }
 
   return <>{children}</>;

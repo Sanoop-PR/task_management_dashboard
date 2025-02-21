@@ -3,6 +3,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { encryptTransform } from "redux-persist-transform-encrypt";
 import authSlice from "./slice/authSlice";
+import tasksSlice from "./slice/tasksSlice";
 
 // Define RootState Type
 export type RootState = ReturnType<typeof rootReducer>;
@@ -28,6 +29,7 @@ const persistConfig = {
 // Root reducer
 const rootReducer = combineReducers({
   auth: authSlice,
+  tasks: tasksSlice,
 });
 
 const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);

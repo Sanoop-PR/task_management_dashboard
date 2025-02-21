@@ -1,41 +1,68 @@
-import { AddTask } from "../components/AddTask"
-import {ListTask} from "../components/ListTask"
+import { useDispatch, useSelector } from "react-redux";
+import { AddTask } from "../components/AddTask";
+import { ListTask } from "../components/ListTask";
+import { AppDispatch, RootState } from "../features/store";
+import { fetchTasks } from "../features/slice/tasksSlice";
+import { useEffect, useState } from "react";
 
 export const Dashboard = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { tasks } = useSelector((state: RootState) => state.tasks);
+  const [filter, setFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("title");
+
+  useEffect(() => {
+    tasks.length===0 &&dispatch(fetchTasks());
+  }, [dispatch]);
+
+  // Filtering Logic
+  let filteredData = tasks
+    ?.filter((task) => {
+      // Status Filtering
+      if (filter === "completed") return task.completed;
+      if (filter === "pending") return !task.completed;
+      return tasks; // "all" case
+    }) || [];
+
+  filteredData = [...filteredData].sort((a, b) => {
+    if (sortBy === "title") {
+      return a.title.localeCompare(b.title);
+    } else if (sortBy === "status") {
+      return Number(a.completed) - Number(b.completed);
+    }
+    return 0;
+  });
+
   return (
     <main className="p-4 space-y-5">
       <AddTask />
-      <section className="flex gap-5">
-        <div className=" max-w-40">
-          <div className="relative">
-            <select
-              className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none shadow-sm focus:shadow-md appearance-none cursor-pointer">
-              <option value="brazil">Brazil</option>
-              <option value="bucharest">Bucharest</option>
-              <option value="london">London</option>
-              <option value="washington">Washington</option>
-            </select>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-            </svg>
-          </div>
-        </div>
-        <div className=" max-w-40">
-          <div className="relative">
-            <select
-              className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none shadow-sm focus:shadow-md appearance-none cursor-pointer">
-              <option value="brazil">Brazil</option>
-              <option value="bucharest">Bucharest</option>
-              <option value="london">London</option>
-              <option value="washington">Washington</option>
-            </select>
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2.5 right-2.5 text-slate-700">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
-            </svg>
-          </div>
-        </div>
-      </section>
-      <ListTask/>
+
+      {/* Status Filter Dropdown */}
+      <select
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        className="max-w-40 bg-transparent text-slate-700 text-sm border border-slate-200 rounded p-2 cursor-pointer"
+      >
+        <option value="all">All</option>
+        <option value="completed">Completed</option>
+        <option value="pending">Pending</option>
+      </select>
+
+      {/* sort filter */}
+      <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value)}
+        className="max-w-40 ml-3 bg-transparent text-slate-700 text-sm border border-slate-200 rounded p-2 cursor-pointer"
+      >
+        <option value="title">Sort by Title</option>
+        <option value="status">Sort by Status</option>
+      </select>
+
+      {filteredData.length > 0 ? (
+        filteredData.map((task) => <ListTask key={task.id} task={task} />)
+      ) : (
+        <p>No tasks found</p>
+      )}
     </main>
-  )
-}
+  );
+};

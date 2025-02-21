@@ -71,7 +71,7 @@ export const SignIn = () => {
         }
         <p className="flex justify-center mt-6 text-sm text-slate-600">
         Don&apos;t have an account?
-          <Link to={'/sign-in'} className="ml-1 text-sm font-semibold text-slate-700 underline">
+          <Link to={'/sign-up'} className="ml-1 text-sm font-semibold text-slate-700 underline">
             Sign up
           </Link>
         </p>

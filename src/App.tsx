@@ -4,6 +4,7 @@ import { Dashboard } from './pages/Dashboard';
 import { SignIn } from './pages/SignIn';
 import { SignUp } from './pages/SignUp';
 import { ProtectedRoute } from './components/ProtectedRoute';
+import { EditTask } from './components/EditTask';
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="edit/:id" element={<ProtectedRoute><EditTask /></ProtectedRoute>} />
           <Route path="sign-in" element={<SignIn />} />
           <Route path="sign-up" element={<SignUp />} />
         </Routes>
