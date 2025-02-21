@@ -1,12 +1,13 @@
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { useParams } from "react-router"
+import { useNavigate, useParams } from "react-router"
 import { getTaskById, updateTask } from "../features/slice/tasksSlice"
 import { AppDispatch, RootState } from "../features/store"
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form"
 import { Task } from "../types"
+import Swal from "sweetalert2"
 
 const getTodayDate = () => {
   const today = new Date();
@@ -28,6 +29,7 @@ const editSchema = yup.object().shape({
 export const EditTask = () => {
   const { id } = useParams()
   const dispatch = useDispatch<AppDispatch>()
+  const navigate = useNavigate()
 
   const { task, error, isLoading } = useSelector((state: RootState) => state.tasks);
   const { user } = useSelector((state: RootState) => state.auth);
@@ -44,8 +46,8 @@ export const EditTask = () => {
   useEffect(() => {
     if (task) {
       reset({
-        title: task?.title, 
-        dueDate: task?.dueDate?new Date(task?.dueDate):undefined, 
+        title: task?.title,
+        dueDate: task?.dueDate ? new Date(task?.dueDate) : undefined,
         completed: task?.completed,
       });
     }
@@ -56,22 +58,24 @@ export const EditTask = () => {
   }, [dispatch])
 
   const onSubmit = (data: { title: string; dueDate: Date; completed: boolean }) => {
-    if (!task || !user) return; 
+    if (!task || !user) return;
     const updatedTask: Task = {
       title: data.title,
       dueDate: data.dueDate.toISOString(),
       userId: user.id,
       id: task.id,
       completed: data.completed
-      };
-      console.log(updatedTask)
-    dispatch(updateTask(updatedTask))
+    };
+    dispatch(updateTask(updatedTask)).unwrap().then(() => {
+      Swal.fire({ timer: 1000, title: "task updated success" })
+      navigate('/')
+    })
   };
 
   // console.log(task)
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}  className="p-10 space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="p-10 space-y-5">
       <textarea {...editForm("title")} className="border-1 w-full p-2" ></textarea>
       {errors.title && (
         <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
@@ -82,7 +86,7 @@ export const EditTask = () => {
           <div className="relative">
             <select
               {...editForm("completed")}
-              className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer">
+              className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer dark:bg-gray-800 dark:text-white">
               <option value="true">Completed</option>
               <option value="false">Pending</option>
             </select>
@@ -98,9 +102,9 @@ export const EditTask = () => {
           <label>Date</label>
           <input
             {...editForm("dueDate")}
-            className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow dark:bg-gray-800 dark:text-white"
             type="date"
-          min={today}
+            min={today}
           />
           {errors.dueDate && <p className="text-red-500 text-xs mt-1">{errors.dueDate.message}</p>}
         </div>

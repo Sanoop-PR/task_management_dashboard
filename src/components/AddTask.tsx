@@ -11,7 +11,12 @@ import { getUser } from "../features/slice/authSlice";
 const getTodayDate = () => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  return today.toISOString().split("T")[0];
+  
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, '0');
+  const day = String(today.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
 };
 
 const today = getTodayDate();
@@ -36,7 +41,6 @@ export const AddTask = () => {
     resolver: yupResolver(taskSchema),
   });
 
-  const { tasks, error, isLoading } = useSelector((state: RootState) => state.tasks);
   const { user } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
@@ -57,28 +61,28 @@ export const AddTask = () => {
   // console.log(tasks , error, isLoading)
   return (
     <div className="w-full">
-      <form onSubmit={handleSubmit(onSubmit)} className="relative flex items-center gap-2">
+      <form onSubmit={handleSubmit(onSubmit)} className="relative flex sm:flex-row flex-col  items-center gap-2">
         <div className="w-full">
           <input
             {...register("title")}
-            className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md p-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 dark:text-white text-sm border border-slate-200 rounded-md p-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
             placeholder="Add task"
           />
           {errors.title && <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>}
         </div>
 
-        <div className="w-32">
+        <div className="w-full sm:w-32">
           <input
             {...register("dueDate")}
-            className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow"
+            className="w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow dark:text-white"
             type="date"
-            min={today}
+            min={today} // past date hide
           />
           {errors.dueDate && <p className="text-red-500 text-xs mt-1">{errors.dueDate.message}</p>}
         </div>
 
         <button
-          className="rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+          className="rounded-md bg-slate-800 py-2 px-4 border border-transparent text-center text-sm text-white transition-all shadow-md hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none max-sm:w-full"
           type="submit"
         >
           Add

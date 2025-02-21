@@ -12,7 +12,7 @@ const persistConfig = {
   version: 1,
   storage,
   whitelist: [
-    "auth",
+    "auth","tasks"
   ],
   transforms: [
     encryptTransform({
