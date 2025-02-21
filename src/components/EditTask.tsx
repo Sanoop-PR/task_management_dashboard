@@ -31,7 +31,7 @@ export const EditTask = () => {
   const dispatch = useDispatch<AppDispatch>()
   const navigate = useNavigate()
 
-  const { task, error, isLoading } = useSelector((state: RootState) => state.tasks);
+  const { task } = useSelector((state: RootState) => state.tasks);
   const { user } = useSelector((state: RootState) => state.auth);
 
   const {

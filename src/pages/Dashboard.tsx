@@ -12,7 +12,7 @@ export const Dashboard = () => {
   const [filter, setFilter] = useState("all");
   const [sortBy, setSortBy] = useState("title");
   const [currentPage, setCurrentPage] = useState(1);
-  const [tasksPerPage, setTasksPerPage] = useState(10);
+  const [tasksPerPage] = useState(10);
 
   useEffect(() => {
     dispatch(allTodos())

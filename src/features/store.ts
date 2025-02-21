@@ -16,7 +16,7 @@ const persistConfig = {
   ],
   transforms: [
     encryptTransform({
-      secretKey: "my-super-secret-key",
+      secretKey: import.meta.env.VITE_STORE_ENCRYPT_KEY,
       onError: function (error) {
         console.error("Encryption error", error);
       },
